@@ -1,0 +1,11 @@
+{
+  "name": "CachyOS Update",
+  "author": "Chris",
+  "flags": [],
+  "api_version": 1,
+  "publish": {
+    "tags": ["system", "update"],
+    "description": "Run cachy-update from the Steam Deck quick-access menu.",
+    "image": ""
+  }
+}
