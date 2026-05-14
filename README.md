@@ -16,15 +16,10 @@ A [Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader) plugin that 
 
 ## Installation
 
-1. Download `decky-cachy-update.zip` from the [latest release](https://github.com/bertonha/decky-cachy-update/releases/latest)
-2. Transfer it to your Steam Deck
-3. Unzip into the plugins directory:
-
-```bash
-unzip decky-cachy-update.zip -d ~/homebrew/plugins/
-```
-
-4. Restart Decky Loader or reboot
+1. Download `decky-cachy-update.zip` from the [latest release](https://github.com/bertonha/decky-cachy-update/releases/latest) and transfer it to your Steam Deck
+2. In Gaming Mode, open the quick-access menu (···) → **Decky** → **Settings** → enable **Developer Mode**
+3. Still in Decky Settings, open the **Developer** section and choose **Install plugin from ZIP file**
+4. Select the downloaded `decky-cachy-update.zip`
 
 ## Usage
 
