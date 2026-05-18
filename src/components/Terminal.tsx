@@ -41,7 +41,6 @@ export const Terminal: FC = () => {
   };
 
   const handleSend = async () => {
-    if (!input.trim()) return;
     const text = input; setInput("");
     await safeAsyncOperation(() => sendInput(text + "\n"), "Terminal -> send");
   };
@@ -55,7 +54,7 @@ export const Terminal: FC = () => {
   const handleReset = () => { setPhase("idle"); setOutput(""); setExitCode(null); };
 
   return (
-    <PanelSection title="CachyOS Update">
+    <PanelSection>
 
       {phase === "idle" && (
         <PanelSectionRow>
@@ -82,7 +81,7 @@ export const Terminal: FC = () => {
             />
           </PanelSectionRow>
           <PanelSectionRow>
-            <ButtonItem layout="below" onClick={handleSend} disabled={!input.trim()}>Send</ButtonItem>
+            <ButtonItem layout="below" onClick={handleSend}>Send</ButtonItem>
           </PanelSectionRow>
           <PanelSectionRow>
             <ButtonItem layout="below" onClick={handleKill}>Kill</ButtonItem>

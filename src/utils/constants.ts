@@ -4,7 +4,7 @@ export const STYLES = {
     backgroundColor: "var(--decky-selected-ui-bg)",
     borderRadius: "4px",
     border: "1px solid var(--decky-border-color)",
-    fontSize: "11px",
+    fontSize: "10px",
     fontFamily: "monospace",
     whiteSpace: "pre-wrap" as const,
     wordBreak: "break-all" as const,
