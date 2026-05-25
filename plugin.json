@@ -1,11 +1,11 @@
 {
   "name": "CachyOS Update",
-  "author": "Chris",
+  "author": "Christofer Bertonha",
   "flags": [],
   "api_version": 1,
   "publish": {
-    "tags": ["system", "update"],
-    "description": "Run cachy-update from the Steam Deck quick-access menu.",
-    "image": ""
+    "tags": ["system", "update", "cachy", "cachyos"],
+    "description": "Run cachy-update from the Steam Deck quick-access menu. Requires CachyOS installed on your Steam Deck.",
+    "image": "https://raw.githubusercontent.com/christoferbertonha/decky-cachy-update/main/assets/screenshot.png"
   }
 }
