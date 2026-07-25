@@ -1,0 +1,26 @@
+[project]
+name = "decky-cachy-update"
+version = "0.0.2"
+description = "Run cachy-update from the Steam Deck quick-access menu"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+# decky.pyi is vendored from Decky Loader — it describes the `decky` module that
+# the loader injects at runtime, and is kept byte-identical to upstream.
+extend-exclude = ["decky.pyi", "dist", "node_modules"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "SIM", # flake8-simplify
+    "RUF", # ruff-specific
+]
+
+[tool.ruff.format]
+quote-style = "double"

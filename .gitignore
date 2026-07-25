@@ -1,59 +1,41 @@
-lib-cov
-*.seed
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+out/
+*.zip
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.ruff_cache/
+
+# Decky
+# The loader injects its own copy of these at runtime; never commit them.
+decky_plugin.py
+/.yalc/
+yalc.lock
+cli/
+
+# Logs and scratch
 *.log
-*.csv
-*.dat
-*.out
 *.pid
-*.gz
-*.swp
+tmp/
 
-pids
-logs
-results
-tmp
-
-# Coverage reports
-coverage
-
-# API keys and secrets
+# Secrets
 .env
-
-# Dependency directory
-node_modules
-bower_components
-.pnpm-store
+.env.*
+!.env.example
 
 # Editors
-.idea
+.idea/
 *.iml
+.vscode/settings.json
+*.swp
 
 # OS metadata
 .DS_Store
 Thumbs.db
-
-# Ignore built ts files
-dist/
-
-__pycache__/
-
-/.yalc
-yalc.lock
-
-.vscode/settings.json
-
-# Ignore output folder
-backend/out
-
-# Make sure to ignore any instance of the loader's decky_plugin.py
-decky_plugin.py
-
-# Ignore decky CLI for building plugins
-out
-out/*
-cli/
-cli/*
-cli/decky
-
-# Release artifact
-*.zip

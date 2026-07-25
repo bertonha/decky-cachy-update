@@ -6,15 +6,29 @@
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -c -w",
-    "package": "pnpm build && rm -rf out && mkdir -p out/\"CachyOS Update\"/dist && cp plugin.json main.py package.json out/\"CachyOS Update\"/ && cp dist/index.js out/\"CachyOS Update\"/dist/ && cd out && zip -r ../decky-cachy-update.zip \"CachyOS Update\" && cd .. && rm -rf out && echo 'Created decky-cachy-update.zip'"
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "check": "pnpm typecheck && pnpm lint",
+    "package": "pnpm build && ./scripts/package.sh"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/christoferbertonha/decky-cachy-update.git"
+    "url": "git+https://github.com/bertonha/decky-cachy-update.git"
   },
+  "bugs": {
+    "url": "https://github.com/bertonha/decky-cachy-update/issues"
+  },
+  "homepage": "https://github.com/bertonha/decky-cachy-update#readme",
   "author": "Chris <christoferbertonha@gmail.com>",
   "license": "BSD-3-Clause",
+  "packageManager": "pnpm@11.3.0",
+  "engines": {
+    "node": ">=22"
+  },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.5",
     "@decky/rollup": "^1.0.2",
     "@decky/ui": "^4.12.0",
     "@rollup/rollup-linux-x64-musl": "^4.62.2",
