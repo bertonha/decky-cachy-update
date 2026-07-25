@@ -1,14 +1,19 @@
 import { logError } from "../api";
 
-export const safeAsyncOperation = async <T,>(
+/**
+ * Runs a backend call, forwarding any failure to the plugin log instead of
+ * letting it escape into Steam's UI. Returns `undefined` when the call failed.
+ */
+export const safeAsync = async <T>(
   operation: () => Promise<T>,
-  errorContext: string
+  context: string,
 ): Promise<T | undefined> => {
   try {
     return await operation();
   } catch (e) {
-    logError(`${errorContext}: ${String(e)}`);
-    console.error(e);
+    const message = e instanceof Error ? e.message : String(e);
+    void logError(`${context}: ${message}`);
+    console.error(`[CachyOS Update] ${context}`, e);
     return undefined;
   }
 };
