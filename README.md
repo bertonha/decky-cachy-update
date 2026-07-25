@@ -5,8 +5,10 @@ A [Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader) plugin that 
 ## Features
 
 - One-button update from the QAM — no desktop mode required
-- Real-time streaming output via a PTY-based terminal
+- Real-time streaming output, pushed from the backend as it is produced
 - Send input to the running process (sudo password, confirmations, etc.)
+- The run gets a real controlling terminal, so `sudo` prompts behave normally
+- **Kill** stops the whole process tree, not just the shell that started it
 - ANSI codes stripped for clean readable output
 
 ## Requirements
@@ -27,14 +29,48 @@ Open the quick-access menu (···) → **CachyOS Update** → **Run cachy-updat
 
 Output streams in real-time. If the process asks for input (e.g. a sudo password or confirmation prompt), type it in the **Input** field and press **Send**.
 
-## Building from source
+## Development
+
+Requires Node.js 22+ and pnpm (pinned via `packageManager` — `corepack enable` picks up the right version).
 
 ```bash
 pnpm install
-pnpm package
+pnpm watch      # rebuild dist/index.js on change
+pnpm check      # typecheck + lint
+pnpm package    # build and produce decky-cachy-update.zip
 ```
 
-The zip will be created at `decky-cachy-update.zip`.
+Python is linted and formatted with [ruff](https://docs.astral.sh/ruff/):
+
+```bash
+uvx ruff check .
+uvx ruff format .
+```
+
+### Architecture
+
+| Path | Role |
+| --- | --- |
+| `main.py` | Backend. Runs `cachy-update` on a pty, streams output to the frontend via `decky.emit`. |
+| `src/api/` | Typed wrappers around the backend's callables and events. |
+| `src/hooks/useSession.ts` | Mirrors the backend session into React state. |
+| `src/components/Terminal.tsx` | The quick-access panel. |
+| `scripts/package.sh` | Assembles the release zip. |
+
+The backend owns the command it runs; the frontend cannot choose it. Output is
+pushed as `cachy_update/output` events, and `get_state` returns the authoritative
+transcript that the frontend reconciles against when a run ends.
+
+### Releasing
+
+Bump `version` in `package.json`, then push a matching tag:
+
+```bash
+git tag v0.0.3 && git push --tags
+```
+
+The release workflow verifies the tag matches `package.json`, builds the zip, and
+attaches it to a GitHub release.
 
 ## License
 
