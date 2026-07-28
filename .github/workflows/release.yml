@@ -20,6 +20,9 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.tag || github.ref }}
+          # The changelog is built from the log since the previous tag, which
+          # needs the full history and every tag, not the default shallow clone.
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v6
 
@@ -41,8 +44,35 @@ jobs:
 
       - run: pnpm package
 
+      # GitHub's own generated notes list merged pull requests, so a release made
+      # of commits pushed straight to main comes out empty. Build the changelog
+      # from the log instead; GitHub still appends its "Full Changelog" link.
+      - name: Build the changelog
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          previous=$(git describe --tags --abbrev=0 "$TAG^" 2>/dev/null || true)
+          range="$TAG"
+          if [ -n "$previous" ]; then
+            range="$previous..$TAG"
+            echo "Changelog range: $range"
+          else
+            echo "No earlier tag found; using every commit up to $TAG"
+          fi
+          {
+            echo "## Changes"
+            echo
+            # The version bump is an artefact of releasing, not a change in it.
+            # grep exits 1 when it filters everything out, which the step's
+            # `-e -o pipefail` shell would otherwise treat as a failure.
+            git log --no-merges --reverse --pretty='- %s' "$range" |
+              grep -v '^- chore: bump version' || true
+          } > release-notes.md
+          cat release-notes.md
+
       - uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ inputs.tag || github.ref_name }}
           files: decky-cachy-update.zip
+          body_path: release-notes.md
           generate_release_notes: true
