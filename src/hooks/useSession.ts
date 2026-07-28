@@ -10,7 +10,7 @@ export interface Session {
   start: () => Promise<void>;
   send: (text: string) => Promise<void>;
   kill: () => Promise<void>;
-  reset: () => void;
+  reset: () => Promise<void>;
 }
 
 /**
@@ -64,9 +64,13 @@ export const useSession = (): Session => {
     setStatus({ kind: "killed" });
   }, []);
 
-  const reset = useCallback(() => {
+  // Discards the finished session on the backend as well, so the transcript and
+  // exit code can't be restored by the next sync(); the panel comes back on a
+  // clean Run button instead of the previous run's result.
+  const reset = useCallback(async () => {
     setOutput("");
     setStatus({ kind: "idle" });
+    await safeAsync(killSession, "useSession -> reset");
   }, []);
 
   return { status, output, start, send, kill, reset };

@@ -91,7 +91,7 @@ export const Terminal: FC = () => {
             <div style={statusStyle}>{statusText}</div>
           </PanelSectionRow>
           <PanelSectionRow>
-            <ButtonItem layout="below" onClick={reset}>
+            <ButtonItem layout="below" onClick={() => void reset()}>
               Back
             </ButtonItem>
           </PanelSectionRow>
