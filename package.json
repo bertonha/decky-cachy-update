@@ -1,6 +1,6 @@
 {
   "name": "decky-cachy-update",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Run cachy-update from the Steam Deck quick-access menu",
   "type": "module",
   "scripts": {

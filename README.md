@@ -78,10 +78,11 @@ transcript that the frontend reconciles against when a run ends.
 
 ### Releasing
 
-Bump `version` in `package.json`, then push a matching tag:
+Bump `version` in `package.json` and `pyproject.toml` (a hook checks they match),
+then push a matching tag:
 
 ```bash
-git tag v0.0.3 && git push --tags
+git tag v0.0.4 && git push --tags
 ```
 
 The release workflow verifies the tag matches `package.json`, builds the zip, and
