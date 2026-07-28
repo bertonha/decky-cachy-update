@@ -16,7 +16,7 @@ export interface Session {
 /**
  * Mirrors the backend session. Output arrives as pushed events rather than by
  * polling; `sync` pulls the authoritative transcript on mount and once a run
- * ends, which also covers anything emitted while the panel was being remounted.
+ * fails, which also covers anything emitted while the panel was being remounted.
  */
 export const useSession = (): Session => {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
@@ -32,9 +32,25 @@ export const useSession = (): Session => {
     else setStatus({ kind: "idle" });
   }, []);
 
+  // Discards the finished session on the backend as well, so the transcript and
+  // exit code can't be restored by the next sync(); the panel comes back on a
+  // clean Run button instead of the previous run's result.
+  const reset = useCallback(async () => {
+    setOutput("");
+    setStatus({ kind: "idle" });
+    await safeAsync(killSession, "useSession -> reset");
+  }, []);
+
   useEffect(() => {
     const offOutput = onOutput((chunk) => setOutput((prev) => prev + chunk));
     const offExit = onExit((code) => {
+      // A successful update has nothing left to report, so the panel returns to
+      // its initial state rather than asking for a Back press. A failure keeps
+      // its transcript on screen — that output is the only clue to what broke.
+      if (code === 0) {
+        void reset();
+        return;
+      }
       setStatus({ kind: "exited", code });
       // Trailing chunks may still be in flight; the backend transcript wins.
       void sync();
@@ -44,7 +60,7 @@ export const useSession = (): Session => {
       offOutput();
       offExit();
     };
-  }, [sync]);
+  }, [sync, reset]);
 
   const start = useCallback(async () => {
     setOutput("");
@@ -62,15 +78,6 @@ export const useSession = (): Session => {
   const kill = useCallback(async () => {
     await safeAsync(killSession, "useSession -> kill");
     setStatus({ kind: "killed" });
-  }, []);
-
-  // Discards the finished session on the backend as well, so the transcript and
-  // exit code can't be restored by the next sync(); the panel comes back on a
-  // clean Run button instead of the previous run's result.
-  const reset = useCallback(async () => {
-    setOutput("");
-    setStatus({ kind: "idle" });
-    await safeAsync(killSession, "useSession -> reset");
   }, []);
 
   return { status, output, start, send, kill, reset };
