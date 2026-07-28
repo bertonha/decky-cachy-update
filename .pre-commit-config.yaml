@@ -1,0 +1,71 @@
+# Managed with prek (https://github.com/j178/prek), a drop-in pre-commit runner.
+#   prek install      install the git hooks
+#   prek run --all-files
+#
+# decky.pyi is vendored byte-identical from Decky Loader, so no hook may touch it.
+exclude: ^decky\.pyi$
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        # Two trailing spaces are a hard line break in Markdown; .editorconfig
+        # already exempts *.md from trimming.
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-added-large-files
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.0
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      # Biome comes from the lockfile rather than a hook-managed install, so it
+      # is always the same version CI runs.
+      - id: biome-check
+        name: biome check
+        entry: pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true
+        language: system
+        types_or: [javascript, jsx, ts, tsx, json]
+        require_serial: true
+
+      # Types are a whole-program property, so this ignores the changed files
+      # and checks the project as a whole.
+      - id: typecheck
+        name: tsc --noEmit
+        entry: pnpm exec tsc --noEmit
+        language: system
+        pass_filenames: false
+        files: \.tsx?$|^(tsconfig\.json|package\.json)$
+
+      # The release workflow only verifies the tag against package.json; this
+      # keeps pyproject.toml from silently drifting away from it.
+      - id: version-sync
+        name: package.json and pyproject.toml agree on version
+        entry: scripts/check-version-sync.sh
+        language: script
+        pass_filenames: false
+        files: ^(package\.json|pyproject\.toml)$
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1
+    hooks:
+      - id: shellcheck
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.12
+    hooks:
+      - id: actionlint

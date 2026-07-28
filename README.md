@@ -47,6 +47,21 @@ uvx ruff check .
 uvx ruff format .
 ```
 
+### Pre-commit hooks
+
+Hooks are defined in `.pre-commit-config.yaml` and run with
+[prek](https://github.com/j178/prek), a drop-in `pre-commit` replacement:
+
+```bash
+prek install          # once, to enable the hooks on commit
+prek run --all-files  # run everything on demand
+```
+
+They cover ruff (lint + format), biome (lint + format, using the version from the
+lockfile so it matches CI), `tsc --noEmit`, shellcheck, actionlint, whitespace and
+JSON/YAML/TOML sanity checks, and a guard that keeps the `version` in
+`package.json` and `pyproject.toml` in sync.
+
 ### Architecture
 
 | Path | Role |
