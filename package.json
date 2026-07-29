@@ -24,14 +24,6 @@
   "author": "Chris <christoferbertonha@gmail.com>",
   "license": "BSD-3-Clause",
   "packageManager": "pnpm@11.3.0",
-  "pnpm": {
-    "peerDependencyRules": {
-      "ignoreMissing": [
-        "react",
-        "react-dom"
-      ]
-    }
-  },
   "engines": {
     "node": ">=22"
   },
