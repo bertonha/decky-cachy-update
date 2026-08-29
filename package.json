@@ -28,13 +28,13 @@
     "node": ">=22"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.7",
+    "@biomejs/biome": "^2.5.10",
     "@decky/rollup": "^1.0.2",
     "@decky/ui": "^4.12.0",
-    "@rollup/rollup-linux-x64-musl": "^4.62.4",
+    "@rollup/rollup-linux-x64-musl": "^4.63.0",
     "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
-    "rollup": "^4.62.4",
+    "@types/react-dom": "^19.2.5",
+    "rollup": "^4.63.0",
     "typescript": "^7.0.2"
   },
   "dependencies": {
