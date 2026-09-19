@@ -46,6 +46,25 @@ INCOMPLETE_TAIL = re.compile(r"(?:\x1B(?:\[[0-?]*[ -/]*)?|\r+)\Z")
 STRIPPED_ENV_VARS = ("LD_LIBRARY_PATH", "LD_LIBRARY_PATH_ORIG", "LD_PRELOAD")
 
 
+def _runtime_dir(env: dict[str, str]) -> str:
+    """Pick a writable XDG_RUNTIME_DIR for the child.
+
+    cachy-update >= 4.4.1 keeps its temporary files in "$XDG_RUNTIME_DIR/arch-update",
+    so an unset variable makes it fail with "mkdir: cannot create directory
+    '/arch-update': Permission denied". Steam does not always hand the plugin a
+    runtime dir, so fall back to the user's own one and then to the plugin's.
+    """
+    candidates = (
+        env.get("XDG_RUNTIME_DIR"),
+        f"/run/user/{os.getuid()}",
+        decky.DECKY_PLUGIN_RUNTIME_DIR,
+    )
+    for path in candidates:
+        if path and os.path.isdir(path) and os.access(path, os.W_OK):
+            return path
+    return decky.DECKY_PLUGIN_RUNTIME_DIR
+
+
 def _clean(text: str) -> str:
     text = ANSI_ESCAPE.sub("", text)
     return CR_BEFORE_LF.sub("\n", text).replace("\r", "\n")
@@ -107,6 +126,7 @@ class Plugin:
         await self._end_session()
 
         env = {k: v for k, v in os.environ.items() if k not in STRIPPED_ENV_VARS}
+        env["XDG_RUNTIME_DIR"] = _runtime_dir(env)
         master_fd, slave_fd = pty.openpty()
 
         def attach_controlling_tty() -> None:
